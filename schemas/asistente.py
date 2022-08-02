@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 from typing import Optional
-from default.genero import Genero
+from schemas.default.genero import Genero
 
 class Asistente(BaseModel):
     ruc: str = Field(
