@@ -34,3 +34,7 @@ def crear_asistente(asistente: Asistente):
 
     #Retornamos el usuario creado
     return conn.execute(asistentes.select().where(asistentes.c.asiRUC == valores['asiRUC'])).first()
+
+@asistente.get("/asistentes/{ruc}", tags=["asistentes"])
+def get_asistente(ruc: str):
+    return conn.execute(asistentes.select().where(asistentes.c.asiRUC == ruc)).first()
