@@ -1,4 +1,3 @@
-from http.client import UnimplementedFileMode
 from sqlalchemy import Table, Column, VARCHAR
 from config.db import meta, engine
 

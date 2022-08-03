@@ -6,6 +6,31 @@ from schemas.asistente import Asistente
 
 asistente = APIRouter()
 
-@asistente.get("/asistentes", response_model=list[Asistente], tags=['asistentes'])
+# Para obtener todos los empleados de la base de datos
+@asistente.get("/asistentes", tags=['asistentes'])
 def get_asistentes():
     return conn.execute(asistentes.select()).fetchall()
+
+
+# Para crear nuevos registros de empleados
+@asistente.post("/asistentes", tags=["asistentes"])
+def crear_asistente(asistente: Asistente):
+    # Creamos el diccionario para nuestro empleado
+    nuevo_empleado = {
+        "asiRUC": asistente.ruc,
+        "asiNombres": asistente.nombres,
+        "asiApPaterno": asistente.ap_Paterno,
+        "asiApMaterno": asistente.ap_Materno,
+        "asiGenero": asistente.genero.value,
+        "asiTelefono": asistente.telefono,
+        "asiEmail": asistente.email
+    }
+
+    # Insertamos los datos a la base de datos
+    resultado = conn.execute(asistentes.insert().values(nuevo_empleado))
+
+    valores = resultado.last_inserted_params()
+
+
+    #Retornamos el usuario creado
+    return conn.execute(asistentes.select().where(asistentes.c.asiRUC == valores['asiRUC'])).first()
