@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Form
 from config.db import conn
 from models.asistente import asistentes
 from schemas.asistente import Asistente
@@ -14,16 +14,24 @@ def get_asistentes():
 
 # Para crear nuevos registros de empleados
 @asistente.post("/asistentes", tags=["asistentes"])
-def crear_asistente(asistente: Asistente):
+async def crear_asistente(
+    asiRUC: str = Form(...),
+    asiNombres: str = Form(...),
+    asiApPaterno: str = Form(...),
+    asiApMaterno: str = Form(...),
+    asiGenero: str = Form(...),
+    asiTelefono: str = Form(...),
+    asiEmail: str = Form(...)
+):
     # Creamos el diccionario para nuestro empleado
     nuevo_empleado = {
-        "asiRUC": asistente.ruc,
-        "asiNombres": asistente.nombres,
-        "asiApPaterno": asistente.ap_Paterno,
-        "asiApMaterno": asistente.ap_Materno,
-        "asiGenero": asistente.genero.value,
-        "asiTelefono": asistente.telefono,
-        "asiEmail": asistente.email
+        "asiRUC": asiRUC,
+        "asiNombres": asiNombres,
+        "asiApPaterno": asiApPaterno,
+        "asiApMaterno": asiApMaterno,
+        "asiGenero": asiGenero,
+        "asiTelefono": asiTelefono,
+        "asiEmail": asiEmail
     }
 
     # Insertamos los datos a la base de datos
@@ -31,9 +39,8 @@ def crear_asistente(asistente: Asistente):
 
     valores = resultado.last_inserted_params()
 
-
     #Retornamos el usuario creado
-    return conn.execute(asistentes.select().where(asistentes.c.asiRUC == valores['asiRUC'])).first()
+    conn.execute(asistentes.select().where(asistentes.c.asiRUC == valores['asiRUC'])).first()
 
 @asistente.get("/asistentes/{ruc}", tags=["asistentes"])
 def get_asistente(ruc: str):
